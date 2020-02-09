@@ -1,0 +1,2 @@
+# laravel_training_pj_pub
+PHPフレームワークLaravelを利用したSampleAPL
