@@ -1,0 +1,194 @@
+■ブランチの一覧を表示する
+# ローカルブランチのみ
+git branch
+
+# originのブランチも含めて表示
+git branch -a
+
+■対象のブランチに切り替える
+git checkout feature/<ブランチ名>
+
+■作業ブランチを作成する
+# ブランチ作成元(develop)をチェックアウト
+git checkout develop
+
+# originの最新状態を取得
+git fetch
+
+# origin/developをローカルに反映(fast forwardマージになる)
+git pull
+
+# ブランチ作成
+git branch feature/<ブランチ名>
+
+# 作成したブランチを作業対象にする
+git checkout feature/<ブランチ名>
+
+■Githubに反映する
+git push
+
+■作業ブランチの作成とブランチの切り替えを一度に行う
+git checkout -b feature/<ブランチ名>
+
+■ローカルブランチを削除する
+# 削除対象から他のブランチに移動
+git checkout develop
+
+# ブランチ削除
+git branch -D feature/<ブランチ名>
+
+■未ステージング,ステージング,コミットなどの状態を表示する
+git status
+
+■コミット履歴を見る
+git log
+
+■originのコミット状態を取得する
+git fetch
+
+■リポジトリに登録されていないファイルを削除する
+git clean -df
+
+---未ステージング状態(addしていない)で使用するコマンド---
+■ステージングする
+git add --all
+
+■最新コミットのと差分を表示する
+git diff
+
+■作業環境を最新コミットの状態にリセット(ローカルの作業をなかったことにする)
+git reset HEAD --hard
+
+■ファイル単位で最新コミットの状態にリセット
+git checkout filename
+
+■作業中状態を一時保存する
+# 作業中の状態を保存
+git stash
+git checkout feature/<他のブランチ>
+# 作業
+git checkout feature/<元のブランチ>
+# 保存した状態を取得
+git stash pop
+
+■ブランチを造らずにファイルを更新してしまった場合(masterで作成した)
+# 作業中の状態を保存
+git stash
+
+# 作業ブランチ作成元のブランチに移動
+git checkout [元のブランチ]
+
+# 作業ブランチ作成
+git checkout -b [実際の作業ブランチ名]
+
+# 保存知っていた状態を取得
+git stash pop
+
+---ステージング済み(git addした状態)で使用するコマンド---
+■コミットする
+git commit -m "コミットコメント"
+
+# 継ぎ足しコミット
+git commit -amend
+
+■addしたファイルをリセットして最新コミットと同じ状態に戻す
+git checkout HEAD filename
+
+■ステージ内容と最新コミット(HEAD)の差分を見る
+# コンソールに表示する
+git diff --cached
+
+---コミット済状態で使用するコマンド---
+■クローン元の変更内容をロ^カルにマージする
+git pull
+
+■コミット済ファイル名変更
+git mv oldname newname
+
+■ローカルで最新のコミットをなかったことにする
+# HEADを1つ前に移動する
+git resetr HEAD^
+
+■リベース
+git checkout feature/<ブランチ名>
+git rebase origin/develop
+<コンフリクト修正>
+git add filename
+git rebase --conttinue (コミット相当)
+git rebase --abourt    (中止)
+
+■originのブランチにプッシュする
+git push
+
+■プッシュ済みのコミットを改変した場合(--amendやrebaseをした場合)
+# originを上書き
+git push -f
+
+■ブランチを作らずにローカルのmasterにコミットしてしまった!
+# コミットログを調べる
+git log
+
+# 間違ったコミットの直前にHEADを戻す
+git reset [間違ったコミットの直前のコミットID]
+# 間違ったコミットのファイルが未ステージングに戻る
+# 対象ファイルを保存
+git stash
+# 作業ブランチ作成＆移動
+git checkout -b [実際の作業ブランチ名]
+# 保存下板状態を取得
+git stash pop
+
+git add *
+git mommit -m "comment"
+git push
+
+---GitHub連携---
+■GitHubのリポジトリをローカルにクローンする
+git clone <rul>
+
+■コミットをissueに紐づける
+# issue番号をコミットコメントに含める
+git commit -m "#7 コミットコメント"
+
+■コミットと同時にissueをクローズする
+# 'close'をコミットコメントに含める
+git commit -m "close #7 コミットコメント"
+
+---作業フロー---
+■ブランチへのコミット
+# ブランチ切替
+git checkout feature/<ブランチ名>
+
+<ファイルの編集作業>
+
+# ワークのファイルを確認する
+git status
+# 変更・追加・削除を行ったファイルをステージングする
+git add --all
+# ステージング状態を確認する
+git status
+# コミット
+git commit -m "コミットコメント"
+# originのfeature/<ブランチ名>に反映する
+git push
+
+■リポジトリの最新コミットに継ぎ足しでコミットする
+# 変更・追加・削除を行ったファイルをステージングする
+git commit --all
+# リポジトリの最新コミットに継ぎ足しする
+git commit --amend
+# 既存のコミット履歴を改変するので-f (force)を付ける
+git push -f
+
+■リポジトリの最新コミットをその1つ前のコミットにマージする
+# 最新コミット位置(HEAD)を1つ前に移動
+git reset HEAD^
+# 最新コミットだったファイルが未コミットに戻るので改めてステージングする
+git add --all
+# 最新コミットにつぎ足す
+git commit --amend
+# プッシュ済みの履歴を置き換えるので-fを付ける
+git push -filename
+
+
+

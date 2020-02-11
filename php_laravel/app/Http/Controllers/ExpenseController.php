@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
+    const BILL_TO = '0';
+    const CATEGORY = '1';
+    const WAY = '2';
+    
     public function __construct()
     {
         $this->middleware('auth')-> except(['index', 'show']);
@@ -32,9 +36,9 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        $bill_to = Category::where('type', '0')->pluck('name', 'id');
-        $categories = Category::where('type', '1')->pluck('name', 'id');
-        $way = Category::where('type', '2')->pluck('name', 'id');
+        $bill_to = Category::where('type', self::BILL_TO)->pluck('name', 'id');
+        $categories = Category::where('type', self::CATEGORY)->pluck('name', 'id');
+        $way = Category::where('type', self::WAY)->pluck('name', 'id');
         return view('new', ['bill_to' => $bill_to, 'categories' => $categories, 'way' => $way]);
     }
 
@@ -82,8 +86,9 @@ class ExpenseController extends Controller
         } else {
           $login_user_id = '';
         }
-
-        return view('show', ['expense' => $expense, 'login_user_id' => $login_user_id]);
+        $bill_to = Category::where('type', self::BILL_TO)->pluck('name', 'id');
+        
+        return view('show', ['expense' => $expense, 'login_user_id' => $login_user_id, 'bill_to' => $bill_to[$expense->bill_to]]);
     }
 
     /**
@@ -95,8 +100,12 @@ class ExpenseController extends Controller
     public function edit(Expense $expense, $id)
     {
         $expense = Expense::find($id);
-        $categories = Category::all()->pluck('name', 'id');
-        return view('edit', ['expense' => $expense, 'categories' => $categories]);
+        $from = $expense->train->from;
+        $to = $expense->train->to;
+        $bill_to = Category::where('type', self::BILL_TO)->pluck('name', 'id');
+        $categories = Category::where('type', self::CATEGORY)->pluck('name', 'id');
+        $way = Category::where('type', self::WAY)->pluck('name', 'id');
+        return view('edit', ['expense' => $expense, 'bill_to' => $bill_to, 'from' => $from, 'to' => $to, 'categories' => $categories, 'way' => $way]);
     }
 
     /**
@@ -109,13 +118,20 @@ class ExpenseController extends Controller
     public function update(Request $request, Expense $expense, $id)
     {
         $expense = Expense::find($id);
+        $train = Train::find($expense->train_id);
+        $train->from = request('from');
+        $train->to = request('to');
+        $train->way = request('way');
+        $train->save();
+
+        $user = \Auth::user();
         $expense->bill_to = request('bill_to');
         $expense->purpose = request('purpose');
         $expense->sub_total = request('sub_total');
         $expense->total = 0;
         $expense->category_id = request('category_id');
         $expense->user_id = $user->id;
-        $expense->train_id = 0;
+        $expense->train_id = $train->id;
         $expense->save();
         return redirect()->route('expense.detail', ['id' => $expense->id]);
     }

@@ -7,7 +7,6 @@
             {{ Form::label('category_id', '種別 :') }}
             {{ Form::select('category_id', $categories) }}
         </div>
-
         <div class="form-group">
             {{ Form::label('from', '出発 :') }}
             {{ Form::text('from', null) }}

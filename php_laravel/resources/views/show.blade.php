@@ -2,15 +2,31 @@
 
 @section('content')
     <h1>経費詳細</h1>
-    <div>
-        <p>種別 ： {{ $expense->category->name }}</p>
-        <p>出発 ： {{ $expense->train->from }}</p>
-        <p>到着 ： {{ $expense->train->to }}</p>
-        <p>請求先 ： {{ $expense->bill_to }}</p>
-        <p>目的 ： {{ $expense->purpose }}</p>
-        <p>金額 ： {{ $expense->sub_total }}</p>
-    </div>
-
+    <h4>
+        <div>
+            <table>
+                <tr>
+                    <td>種別</td><td>：</td><td>{{ $expense->category->name }}</td>
+                </tr>
+                <tr>
+                    <td>出発</td><td>：</td><td>{{ $expense->train->from }}</td>
+                </tr>
+                <tr>
+                    <td>到着</td><td>：</td><td>{{ $expense->train->to }}</td>
+                </tr>
+                <tr>
+                    <td>請求先</td><td>：</td><td>{{ $bill_to }}</td>
+                </tr>
+                <tr>
+                    <td>目的</td><td>：</td><td>{{ $expense->purpose }}</td>
+                </tr>
+                <tr>
+                    <td>金額</td><td>：</td><td>{{ $expense->sub_total }}</td>
+                </tr>
+            </table>
+        </div>
+    </h4>
+    </br>
     <div>
         <a href={{ route('expense.list' ) }}>一覧に戻る</a>
         @auth
